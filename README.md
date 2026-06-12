@@ -41,33 +41,106 @@ Cada microservicio debe seguir esta estructura interna dentro de su carpeta `src
 
 ---
 
+## ⚡ Configuración Rápida - Para el Equipo
+
+### Requisitos Previos
+- **Node.js** 18+ ([Descargar](https://nodejs.org/))
+- **Docker Desktop** ([Descargar](https://www.docker.com/products/docker-desktop))
+- **Git** configurado
+
+### 1️⃣ Clonar y Configurar Automáticamente
+
+**Windows:**
+```bash
+git clone <repo-url>
+cd Tiendas-Sucursales
+setup.bat
+```
+
+**Linux/Mac:**
+```bash
+git clone <repo-url>
+cd Tiendas-Sucursales
+chmod +x setup.sh
+./setup.sh
+```
+
+Este script automáticamente:
+- ✅ Verifica Node.js y Docker
+- ✅ Crea `.env` en cada carpeta desde `.env.example`
+- ✅ Instala todas las dependencias
+
+### 2️⃣ Levantar la Infraestructura
+
+```bash
+# Asegúrate que Docker Desktop está corriendo, luego:
+docker-compose up -d
+```
+
+Verifica que todo esté funcionando:
+```bash
+docker-compose ps
+```
+
+### 3️⃣ Levantar los Microservicios
+
+**En terminales separadas:**
+
+```bash
+# Terminal 1 - API Gateway
+cd api-gateway
+npm run start
+
+# Terminal 2 - Empresas y Catálogos
+cd ms-empresas-catalogos
+npm run start
+
+# Terminal 3 - Inventarios
+cd ms-inventarios
+npm run start
+
+# Terminal 4 - Ventas y Facturación
+cd ms-ventas-facturacion
+npm run start
+
+# Terminal 5 - Finanzas
+cd ms-finanzas
+npm run start
+
+# Terminal 6 - Dashboard Web
+cd dashboard-web
+npm run dev
+```
+
+### ✅ Verificar que Todo Funciona
+
+| Servicio | URL |
+|----------|-----|
+| **Dashboard** | http://localhost:3005 |
+| **API Gateway** | http://localhost:3000 |
+| **RabbitMQ Dashboard** | http://localhost:15672 (guest/guest) |
+| **PostgreSQL** | localhost:5432 |
+
+---
+
 ## 🚦 Pasos Iniciales para Desarrollo
 
-Para comenzar con un nuevo microservicio (ej. `ms-inventarios`):
+Para comenzar con **cambios** en el código:
 
-1.  **Inicialización de NestJS**:
+1.  **Estructura de Capas**:
+    Cada microservicio sigue N-Capas dentro de `src/`:
+    - `domain/` - Entidades de negocio
+    - `application/` - Casos de uso y DTOs
+    - `infrastructure/` - Base de datos y adaptadores
+    - `presentation/` - Controladores NestJS
+
+2.  **Variables de Entorno**:
+    Cada microservicio tiene `.env.example`. Cópialas a `.env` para desarrollo local.
+
+3.  **Desarrollo en Caliente**:
+    NestJS viene con watch mode. Los cambios se aplican automáticamente:
     ```bash
-    cd ms-inventarios
-    npx -y @nestjs/cli new . --package-manager npm
-    ```
-
-2.  **Configuración de Capas**:
-    Mueve los archivos generados por NestJS a la carpeta `src/presentation` y crea las carpetas `domain`, `application` e `infrastructure`.
-
-3.  **Variables de Entorno**:
-    Copia el archivo `.env.example` de la raíz a la carpeta del microservicio como `.env` y ajusta los valores.
-
-4.  **Levantar Infraestructura**:
-    Desde la raíz del proyecto:
-    ```bash
-    docker-compose up -d
-    ```
-
-5.  **Desarrollo del Dashboard**:
-    Para ejecutar la aplicación web en desarrollo:
-    ```bash
-    cd dashboard-web
-    npm run dev
+    npm run start:dev
     ```
 
 ---
